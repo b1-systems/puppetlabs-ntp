@@ -31,6 +31,9 @@
 #   $template = '${module_name}/${config_tpl}'
 #     Override with your own explicit template.
 #
+#   $ntpd_start_opts = undef
+#     Override the ntpd start parameters.
+#
 # Actions:
 #
 #  Installs, configures, and manages the ntp service.
