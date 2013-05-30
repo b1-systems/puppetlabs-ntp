@@ -75,6 +75,10 @@ This parameter allows you to choose whether to automatically start ntp daemon on
 
 This parameter allows you to explicitly override the template used.
 
+#### `ntpd_start_opts`
+
+This parameter allows you to override the ntpd start parameters.
+
 
 Limitations
 ------------
