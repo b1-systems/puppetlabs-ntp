@@ -50,7 +50,8 @@ class ntp($servers='UNSET',
           $enable=true,
           $restrict=true,
           $config_template=undef,
-          $autoupdate=false
+          $autoupdate=false,
+          $ntpd_start_opts=undef
 ) {
 
   if ! ($ensure in [ 'running', 'stopped' ]) {
@@ -70,6 +71,7 @@ class ntp($servers='UNSET',
       $supported  = true
       $pkg_name   = [ 'ntp' ]
       $svc_name   = 'ntp'
+      $ntpd_opts_file = '/etc/default/ntp'
       $config     = '/etc/ntp.conf'
       $config_tpl = 'ntp.conf.debian.erb'
       if ($servers == 'UNSET') {
@@ -85,6 +87,7 @@ class ntp($servers='UNSET',
       $supported  = true
       $pkg_name   = [ 'ntp' ]
       $svc_name   = 'ntpd'
+      $ntpd_opts_file = undef 
       $config     = '/etc/ntp.conf'
       $config_tpl = 'ntp.conf.el.erb'
       if ($servers == 'UNSET') {
@@ -99,6 +102,7 @@ class ntp($servers='UNSET',
       $supported  = true
       $pkg_name   = [ 'ntp' ]
       $svc_name   = 'ntp'
+      $ntpd_opts_file = undef 
       $config     = '/etc/ntp.conf'
       $config_tpl = 'ntp.conf.suse.erb'
       if ($servers == 'UNSET') {
@@ -114,6 +118,7 @@ class ntp($servers='UNSET',
       $supported  = true
       $pkg_name   = ['net/ntp']
       $svc_name   = 'ntpd'
+      $ntpd_opts_file = undef 
       $config     = '/etc/ntp.conf'
       $config_tpl = 'ntp.conf.freebsd.erb'
       if ($servers == 'UNSET') {
@@ -131,6 +136,7 @@ class ntp($servers='UNSET',
         $supported = true
         $pkg_name = ['ntp']
         $svc_name = 'ntpd'
+        $ntpd_opts_file = undef 
         $config = '/etc/ntp.conf'
         $config_tpl = 'ntp.conf.archlinux.erb'
 
@@ -160,6 +166,19 @@ class ntp($servers='UNSET',
   package { 'ntp':
     ensure => $package_ensure,
     name   => $pkg_name,
+  }
+
+  if ($ntpd_start_opts != undef && $ntpd_opts_file == undef) {
+    fail("The ${module_name} module does not support the ntpd_start_opts parameter on ${::operatingsystem} system")
+  } elsif ($ntpd_start_opts != undef) {
+    file { $ntpd_opts_file:
+      ensure  => file,
+      owner   => 0,
+      group   => 0,
+      mode    => '0644',
+      content => "$ntpd_start_opts",
+      require => Package[$pkg_name],
+    }
   }
 
   file { $config:
