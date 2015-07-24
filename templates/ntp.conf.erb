@@ -6,8 +6,24 @@
 tinker panic 0
 <% end -%>
 
+<% if @crypto != '' -%>
+crypto <%= @crypto %>
+<% end -%>
+
+<% if @interfaces != [] -%>
+<% @interfaces.flatten.each do |interface| -%>
+interface <%= interface %>
+<% end %>
+<% end -%>
+
 <% if @disable_monitor == true -%>
 disable monitor
+<% end -%>
+
+<% if @peers != [] -%>
+<% @peers.flatten.each do |peer| -%>
+restrict <%= peer %> notrap nomodify
+<% end %>
 <% end -%>
 
 <% if @restrict != [] -%>
@@ -19,10 +35,16 @@ restrict <%= restrict %>
 <% end -%>
 
 <% [@servers].flatten.each do |server| -%>
-server <%= server %><% if @preferred_servers.include?(server) -%> prefer<% end %>
+server <%= server %><% if @preferred_servers.include?(server) -%> prefer<% end %><% if @servers_autokey.include?(server) -%> autokey<% end%>
 <% end -%>
 
-<% if scope.lookupvar('::is_virtual') == "false" or @udlc -%>
+<% if @peers != [] -%>
+<% [@peers].flatten.each do |peer| -%>
+peer <%= peer %><% if @peers_autokey.include?(peer) -%> autokey<% end %>
+<% end %>
+<% end -%>
+
+<% if @udlc -%>
 # Undisciplined Local Clock. This is a fake driver intended for backup
 # and when no outside source of synchronized time is available. 
 server	127.127.1.0 
@@ -32,6 +54,14 @@ restrict 127.127.1.0
 
 # Driftfile.
 driftfile <%= @driftfile %>
+
+<% if @keysdir != '' -%>
+keysdir <%= @keysdir %>
+<% end -%>
+
+<% if @tos != '' -%>
+tos <%= @tos %>
+<% end -%>
 
 <% if @keys_enable -%>
 keys <%= @keys_file %>
@@ -44,5 +74,4 @@ requestkey <%= @keys_requestkey %>
 <% if @keys_controlkey != '' -%>
 controlkey <%= @keys_controlkey %>
 <% end -%>
-
 <% end -%>

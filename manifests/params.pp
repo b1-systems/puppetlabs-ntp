@@ -2,12 +2,17 @@ class ntp::params {
 
   $autoupdate        = false
   $config_template   = 'ntp/ntp.conf.erb'
+  $crypto            = ''
   $disable_monitor   = false
+  $interfaces        = []
   $keys_enable       = false
   $keys_controlkey   = ''
   $keys_requestkey   = ''
   $keys_trusted      = []
+  $keysdir           = ''
   $package_ensure    = 'present'
+  $peers             = []
+  $peers_autokey     = []
   $preferred_servers = []
   $restrict          = [
     'default kod nomodify notrap nopeer noquery',
@@ -15,9 +20,11 @@ class ntp::params {
     '127.0.0.1',
     '-6 ::1',
   ]
+  $servers_autokey   = []
   $service_enable    = true
   $service_ensure    = 'running'
   $service_manage    = true
+  $tos               = ''
   $udlc              = false
 
   # On virtual machines allow large clock skews.
